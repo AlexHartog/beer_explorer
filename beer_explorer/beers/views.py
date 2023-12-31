@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from .models import Beer, BeerCheckin, BeerType, Brand, User
 from .serializers import (
     BeerCheckinSerializer,
+    BeerCheckinCreateSerializer,
     BeerSerializer,
     BeerTypeSerializer,
     BrandSerializer,
@@ -15,12 +16,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class BrandViewSet(viewsets.ModelViewSet):
+class BrandViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
 
 
-class BeerTypeViewSet(viewsets.ModelViewSet):
+class BeerTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = BeerType.objects.all()
     serializer_class = BeerTypeSerializer
 
@@ -32,4 +33,9 @@ class BeerViewSet(viewsets.ModelViewSet):
 
 class BeerCheckinViewSet(viewsets.ModelViewSet):
     queryset = BeerCheckin.objects.all()
-    serializer_class = BeerCheckinSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return BeerCheckinCreateSerializer
+        else:
+            return BeerCheckinSerializer

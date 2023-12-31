@@ -25,40 +25,52 @@ class BeerTypeSerializer(serializers.ModelSerializer):
         fields = ["name"]
 
 
+class BrandField(serializers.CharField):
+    def to_representation(self, value):
+        return BrandSerializer(value).data
+
+    def to_internal_value(self, data):
+        brand = Brand.objects.filter(name__iexact=data).first()
+        if not brand:
+            brand = Brand.objects.create(name=data)
+            logger.info(f"Created new brand {data}")
+        return brand
+
+
+class TypeField(serializers.CharField):
+    def to_representation(self, value):
+        return BeerTypeSerializer(value).data
+
+    def to_internal_value(self, type_name):
+        beer_type = BeerType.objects.filter(name__iexact=type_name).first()
+        if not beer_type:
+            beer_type = BeerType.objects.create(name=type_name)
+            logger.info(f"Created new beer type {beer_type}")
+        return beer_type
+
+
 class BeerSerializer(serializers.ModelSerializer):
-    brand = BrandSerializer(read_only=True)
-    type = BeerTypeSerializer(read_only=True)
-    brand_name = serializers.CharField(write_only=True)
-    type_name = serializers.CharField(write_only=True)
+    brand = BrandField()
+    type = TypeField()
 
     class Meta:
         model = Beer
         fields = "__all__"
 
-    def create(self, validated_data):
-        brand_name = validated_data.pop("brand_name", None)
-        if brand_name:
-            brand = Brand.objects.filter(name__iexact=brand_name).first()
-            if not brand:
-                brand = Brand.objects.create(name=brand_name)
-                logger.info(f"Created new brand {brand_name}")
-        else:
-            raise serializers.ValidationError({"brand_name": "This field is required."})
-
-        type_name = validated_data.pop("type_name", None)
-        if type_name:
-            type = BeerType.objects.filter(name__iexact=type_name).first()
-            if not type:
-                type = BeerType.objects.create(name=type_name)
-                logger.info(f"Created new beer type {type_name}")
-        else:
-            raise serializers.ValidationError({"type_name": "This field is required."})
-
-        beer = Beer.objects.create(brand=brand, type=type, **validated_data)
-        return beer
-
 
 class BeerCheckinSerializer(serializers.ModelSerializer):
+    beer = BeerSerializer()
+    user = UserSerializer()
+
     class Meta:
         model = BeerCheckin
         fields = "__all__"
+
+
+class BeerCheckinCreateSerializer(serializers.ModelSerializer):
+    beer_id = serializers.IntegerField(write_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = BeerCheckin
+        fields = ["user_id", "date", "beer_id", "rating"]
