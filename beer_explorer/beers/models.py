@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint, F, Func
 from django.db.models.functions import Lower
 
 
@@ -16,7 +17,7 @@ class Brand(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
+            UniqueConstraint(
                 Lower("name"),
                 name="brand_unique_lower_case_name",
             )
@@ -32,7 +33,7 @@ class BeerType(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
+            UniqueConstraint(
                 Lower("name"),
                 name="type_unique_lower_case_name",
             )
@@ -51,11 +52,9 @@ class Beer(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                Lower("name"),
-                Lower("brand"),
-                Lower("type"),
-                name="beer_unique",
+            UniqueConstraint(
+                fields=["brand", "type", "name"],
+                name="unique_beer",
             )
         ]
 
