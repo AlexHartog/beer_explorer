@@ -23,10 +23,11 @@ DB_PORT=port
 Create a user for django and give the following permissions.
 
 ```
-GRANT ALL ON ALL TABLES IN SCHEMA public to django;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public to django;
-GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to django;
-GRANT CREATE ON SCHEMA public TO django;
+CREATE USER username with PASSWORD 'password';
+GRANT ALL ON ALL TABLES IN SCHEMA public to username;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public to username;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to username;
+GRANT CREATE ON SCHEMA public TO username;
 ```
 
 Create a superuser
