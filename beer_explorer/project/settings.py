@@ -145,4 +145,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",  # Allow requests from angular
     "http://192.168.1.86:4200",
     "http://192.168.1.86:8000",  # Local browser
+    "http://192.168.1.102:4200",
+    "http://192.168.1.102",
 ]
