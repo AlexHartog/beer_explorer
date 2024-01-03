@@ -73,4 +73,4 @@ class BeerCheckinCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BeerCheckin
-        fields = ["user_id", "date", "beer_id", "rating"]
+        fields = ["user_id", "date", "beer_id", "rating", "in_bar"]
