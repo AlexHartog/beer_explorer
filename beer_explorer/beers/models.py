@@ -67,7 +67,7 @@ class BeerCheckin(models.Model):
     beer = models.ForeignKey(Beer, on_delete=models.CASCADE)
     date = models.DateField()
     picture = models.ImageField(upload_to="checkin_pictures", blank=True, null=True)
-    rating = models.IntegerField(blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
     review = models.TextField(blank=True, null=True)
     in_bar = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
