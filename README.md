@@ -3,6 +3,10 @@
 ## Description
 This backend provides a RESTful API through Django Rest Framework.
 
+## Current state
+The backend provides a basic RESTful API to create, modify and delete beers and beer checkins. 
+Due to a deadline to be live on the 1st of January, the focus was on getting the functionality ready. Over the coming period, code quality will be improved.
+
 ## Setup
 
 Create .env file in the root of the project and add the following variables:
