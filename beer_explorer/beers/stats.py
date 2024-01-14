@@ -67,7 +67,7 @@ class UserStats:
         )
 
         points["total_points"] = (
-            points["points_unique"] + points["points_bars"] + points["points_weeks"]
+            points["points_unique"] + points["points_bars"] + points["points_weeks"] * 5
         )
 
         return points.to_dict("records")
