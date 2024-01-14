@@ -10,6 +10,10 @@ class UserStats:
         beer_checkins = BeerCheckin.objects.all().values(user_name=F("user__name"))
 
         beer_checkin_df = pd.DataFrame(list(beer_checkins.values()))
+        beer_checkin_df["week_number"] = (
+            pd.to_datetime(beer_checkin_df["date"]).dt.isocalendar().week
+        )
+
         # Find first beer checkins
         pprint(beer_checkin_df)
         first_beer_checkins = (
@@ -25,16 +29,45 @@ class UserStats:
         pass
 
     def get_unique_beers_per_user(self):
-        return self.valid_beer_checkins.groupby("user_name").size()
+        return (
+            self.valid_beer_checkins.groupby("user_name")
+            .size()
+            .reset_index(name="points_unique")
+        )
+
+    def get_unique_beer_in_bar_per_user(self):
+        return (
+            self.valid_beer_checkins[self.valid_beer_checkins["in_bar"]]
+            .groupby("user_name")
+            .size()
+            .reset_index(name="points_bars")
+        )
+
+    def get_unique_weeks_per_user(self):
+        return (
+            self.valid_beer_checkins.groupby("user_name")["week_number"]
+            .nunique()
+            .reset_index(name="points_weeks")
+        )
 
     def get_stats(self):
-        pprint(
+        points = (
             self.get_unique_beers_per_user()
-            .reset_index(name="points")
-            .to_dict("records")
+            .merge(
+                self.get_unique_beer_in_bar_per_user(),
+                on=["user_name"],
+                how="left",
+            )
+            .merge(
+                self.get_unique_weeks_per_user(),
+                on=["user_name"],
+                how="left",
+            )
+            .fillna(0)
         )
-        return (
-            self.get_unique_beers_per_user()
-            .reset_index(name="points")
-            .to_dict("records")
+
+        points["total_points"] = (
+            points["points_unique"] + points["points_bars"] + points["points_weeks"]
         )
+
+        return points.to_dict("records")
