@@ -1,4 +1,7 @@
 from rest_framework import viewsets
+from django.http import JsonResponse
+
+from .stats import UserStats
 
 from .models import Beer, BeerCheckin, BeerType, Brand, User
 from .serializers import (
@@ -39,3 +42,9 @@ class BeerCheckinViewSet(viewsets.ModelViewSet):
             return BeerCheckinCreateSerializer
         else:
             return BeerCheckinSerializer
+
+
+def get_points(request):
+    user_stats = UserStats()
+    data = user_stats.get_stats()
+    return JsonResponse(data, safe=False)
