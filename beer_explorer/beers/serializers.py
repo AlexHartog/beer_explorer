@@ -61,6 +61,7 @@ class BeerSerializer(serializers.ModelSerializer):
 class BeerCheckinSerializer(serializers.ModelSerializer):
     beer = BeerSerializer()
     user = UserSerializer()
+    joint_checkin = UserSerializer(many=True)
 
     class Meta:
         model = BeerCheckin
@@ -73,4 +74,4 @@ class BeerCheckinCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BeerCheckin
-        fields = ["user_id", "date", "beer_id", "rating", "in_bar"]
+        fields = ["user_id", "date", "beer_id", "rating", "in_bar", "joint_checkin"]

@@ -70,6 +70,9 @@ class BeerCheckin(models.Model):
     rating = models.FloatField(blank=True, null=True)
     review = models.TextField(blank=True, null=True)
     in_bar = models.BooleanField(default=False)
+    joint_checkin = models.ManyToManyField(
+        User, blank=True, related_name="joint_checkin"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
